@@ -13,7 +13,7 @@ cd jruby-$VERSION
 curl http://www.trieuvan.com/apache//ant/binaries/apache-ant-$ant_version-bin.tar.gz -s -o - | tar xzf -
 
 cd bin
-curl "$vendor_url/jruby-launcher-1.0.12-java.tgz" -s -o - | tar zxf -
+curl "$vendor_url/jruby-launcher-1.0.17-java.tgz" -s -o - | tar zxf -
 cd ..
 
 var=$(echo $RUBY_VERSION | awk -F"." '{print $1,$2,$3}')
