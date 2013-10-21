@@ -5,18 +5,16 @@ output_dir=$2
 
 s3_bucket_name="heroku-buildpack-ruby"
 vendor_url="https://s3.amazonaws.com/$s3_bucket_name"
-ant_version="1.9.2"
 maven_version="3.1.1"
 
 curl "http://jruby.org.s3.amazonaws.com/downloads/$VERSION/jruby-src-$VERSION.tar.gz" -s -o - | tar zxf -
 
 cd jruby-$VERSION
-curl http://www.trieuvan.com/apache//ant/binaries/apache-ant-$ant_version-bin.tar.gz -s -o - | tar xzf -
+if [ $VERSION="1.7.5" ]; then
+	package_file="/tmp/buildpack_*/vendor/package.rb"
+	cp $package_file lib/ruby/shared/rubygems
+fi
 curl http://mirror.nexcess.net/apache/maven/maven-3/3.1.1/binaries/apache-maven-$maven_version-bin.tar.gz -s -o - | tar xzf -
-
-cd bin
-curl "$vendor_url/jruby-launcher-1.0.17-java.tgz" -s -o - | tar zxf -
-cd ..
 
 var=$(echo $RUBY_VERSION | awk -F"." '{print $1,$2,$3}')
 set -- $var
@@ -24,9 +22,7 @@ major=$1
 minor=$2
 patch=$3
 
-PATH=apache-maven-$maven_version/bin:$PATH
-
-apache-ant-$ant_version/bin/ant -Djruby.default.ruby.version=$major.$minor
+apache-maven-$maven_version/bin/mvn -Djruby.default.ruby.version=$major.$minor
 rm bin/*.bat
 rm bin/*.dll
 rm bin/*.exe
